@@ -21,8 +21,12 @@ namespace WebApplication1.Controllers
         [HttpPost("/Home/login")]
         public async Task<IActionResult> Login(PersonViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
 
-            var person = _personRepositories.GetByEmail(model.Email);
+                var person = _personRepositories.GetByEmail(model.Email);
             if (person != null && person.Password == model.Password)
             {
                 var claims = new List<Claim>
@@ -64,17 +68,31 @@ namespace WebApplication1.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpGet("/Home/register")]
         public IActionResult Register()
         {
             return View();
         }
-
+        [HttpPost("/Home/register")]
         public IActionResult Register(PersonViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var existingPerson = _personRepositories.GetByEmail(model.Email);
+            if (existingPerson != null)
+            {
+                ModelState.AddModelError("Email", "Alreagy registered user!");
+                return View(model);
+            }
+
+
             var person = new Person(model.Email, model.Password, model.Role);
+            _personRepositories.AddPerson(person);
 
-
-            return View();
+            return RedirectToAction(nameof(Login));
         }
 
 
