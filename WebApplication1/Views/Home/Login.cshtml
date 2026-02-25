@@ -1,0 +1,22 @@
+﻿<h2>Login Form</h2>
+
+@if (TempData["Error"] != null)
+{
+	<p style="color:red;">@TempData["Error"]</p>
+}
+
+<form action="/Home/login" method="post">
+	<p>
+		<label>Email</label><br />
+		<input name="email" value="@TempData["Email"]" required />
+	</p>
+
+	<p>
+		<label>Password</label><br />
+		<input type="password" name="password" required />
+	</p>
+
+	<input type="submit" value="Login" />
+</form>
+<p> You are not with us yet?</p>
+<a asp-controller="Home" asp-action="Register" class="btn btn-primary">Register</a>
